@@ -232,7 +232,7 @@ def book_view(book_id: str):
     let selected = new Set();
 
     async function load() {{
-      const res = await fetch(`/api/book/${bookId}`);
+      const res = await fetch(`/api/book/${{bookId}}`);
       const data = await res.json();
       document.getElementById('title').textContent = `${{data.child}} – Month ${{String(data.month).padStart(2,'0')}} (${data.start_date} → ${data.end_date})`;
       const grid = document.getElementById('grid');
