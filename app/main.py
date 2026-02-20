@@ -234,7 +234,7 @@ def book_view(book_id: str):
     async function load() {{
       const res = await fetch(`/api/book/${{bookId}}`);
       const data = await res.json();
-      document.getElementById('title').textContent = `${{data.child}} – Month ${{String(data.month).padStart(2,'0')}} (${data.start_date} → ${data.end_date})`;
+      document.getElementById('title').textContent = `${{data.child}} – Month ${{String(data.month).padStart(2,'0')}} (${{data.start_date}} → ${{data.end_date}})`;
       const grid = document.getElementById('grid');
       grid.innerHTML = data.photos.map(p => `
         <div class="thumb" data-id="${{p.id}}" onclick="toggle(${{p.id}})">
