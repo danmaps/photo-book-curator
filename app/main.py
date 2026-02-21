@@ -577,10 +577,11 @@ def book_view(book_id: str):
   <style>
     body {{ font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 16px; }}
     .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }}
-    .thumb {{ border: 2px solid transparent; border-radius: 8px; overflow: hidden; }}
+    .thumb {{ border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #fff; }}
     .thumb.selected {{ border-color: #4f81bd; }}
     .thumb button {{ all: unset; display: block; cursor: pointer; width: 100%; }}
     img {{ width: 100%; height: auto; display: block; }}
+    .caption {{ font-size: 12px; color: #666; padding: 6px 6px 8px 6px; text-align: center; }}
     .bar {{ display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }}
     .bar-grow {{ flex: 1 1 auto; }}
     .muted {{ color: #666; font-size: 13px; }}
@@ -661,6 +662,7 @@ def book_view(book_id: str):
           <button type="button" onclick="togglePhoto(${{p.id}})">
             <img src="/thumbs/${{p.thumbnail}}" loading="lazy" />
           </button>
+          <div class="caption">${{p.date_taken}}</div>
         </div>
       `).join(''));
 
@@ -855,7 +857,7 @@ def api_book(
 
     cur.execute(
         f"""
-        SELECT p.id, p.thumbnail_path, COALESCE(s.selected, 0) AS selected
+        SELECT p.id, p.thumbnail_path, p.date_taken, COALESCE(s.selected, 0) AS selected
         FROM photos p
         LEFT JOIN selections s ON s.book_id = ? AND s.photo_id = p.id
         WHERE date(p.date_taken) >= date(?) AND date(p.date_taken) <= date(?)
@@ -870,6 +872,7 @@ def api_book(
             "id": row["id"],
             "thumbnail": Path(row["thumbnail_path"]).name,
             "selected": bool(row["selected"]),
+            "date_taken": (row["date_taken"] or "")[:10],
         }
         for row in cur.fetchall()
         if row["thumbnail_path"]
